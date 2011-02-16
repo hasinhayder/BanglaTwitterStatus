@@ -1,0 +1,17 @@
+Live: http://bangla.twitterstat.us
+Author Name: Hasin Hayder
+Author Homepage: http://hasin.wordpress.com
+Author Email: hasin at leevio dot com
+
+
+License: New BSD
+
+BanglaTwitterStatus is an open source application published under New BSD License. This application shows how effective anyone can post i18n status to twitter. 
+
+I've used Abraham's oath client for collecting session tokens which you can find at https://github.com/abraham/twitteroauth
+
+To run this app in your domain successfully, create a twitter application from http://twitter.com/apps/new, then copy the consumer key and consumer secret into config.php
+
+Create a MySQL database with the schema provided in schema/db.sql - add username and password in common.php
+
+Mainly thats it. Enjoy!
