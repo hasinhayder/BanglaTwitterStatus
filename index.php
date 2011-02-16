@@ -14,6 +14,7 @@ if('1'==$_POST['status']){
     $connection->post("statuses/update", array(
         "status"=>$message
     ));
+    savePost($user_id, $message);
     $pid =1;
 }
 ?>
