@@ -78,6 +78,12 @@ if('1'==$_POST['status']){
     color:#EFEFEF;
     
 }
+
+.info2{
+    margin-left:20px;
+    font-size:14px;
+    color:#EFEFEF;
+}
         </style>
     </head>
     <body>
@@ -96,6 +102,9 @@ if('1'==$_POST['status']){
         </div>
         <div class="row">
             <div class="column grid_6">
+                <p class="info2" <?php if ($access_token) echo "style='display:block;'"; else echo "style='display:none;'"; ?>>
+                    ডিফল্ট ফোনেটিক লেআউট এনাবল করা আছে। ইংরেজী মোডে সুইচ করতে চাইলে ctrl+y (ফায়ারফক্স/ইন্টারনেট এক্সপ্লোরার) অথবা ctrl+k (সাফারি/অপেরা) প্রেস করুন 
+                </p>
                 &nbsp;<a <?php if ($access_token) echo "style='display:none;'";?> href="redirect.php"><img src="images/light.png" border="0" style="margin-left: 20px"/></a>
             </div>
             <div class="column grid_6 right">
