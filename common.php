@@ -3,8 +3,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
 */
+$dbname = "";
+$dbuser = "";
+$dbpwd = "";
+
 function getConnection() {
-    $pdo =   new PDO("mysql:host=localhost;dbname=".DBNAME, DBUSER, DBPWD);
+    global $dbname,$dbuser,$dbpwd;
+    $pdo =   new PDO("mysql:host=localhost;dbname={$dbname}", $dbuser, $dbpwd);
     $pdo->exec("SET CHARACTER SET utf8");
     $pdo->exec("SET SESSION collation_connection ='utf8_general_ci'");
     return $pdo;
