@@ -11,4 +11,5 @@ define('OAUTH_CALLBACK', 'http://bangla.twitterstat.us/twitter.php');
 define("DBNAME","");
 define("DBUSER","");
 define("DBPWD","");
+define("SECRET","SeCrEt16");
 ?>

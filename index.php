@@ -8,14 +8,21 @@ error_reporting(0);
 $user_id = $_SESSION['user_id'];
 $access_token = $_SESSION['access_token'];
 $pid=0;
-if('1'==$_POST['status']){
+if('1'==$_POST['status']) {
     $message = $_POST['message'];
+    $shrinked = $_POST['shrinked'];
     $connection = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET, $access_token['oauth_token'], $access_token['oauth_token_secret']);
+
+    $pid = savePost($user_id, $message);
+    if($shrinked) {
+        $shortUrl = getPostUrl($pid);
+        $message = "{$shrinked}... {$shortUrl}";
+        //echo $message;
+    }
+
     $connection->post("statuses/update", array(
-        "status"=>$message
+            "status"=>$message
     ));
-    savePost($user_id, $message);
-    $pid =1;
 }
 ?>
 <html>
@@ -30,7 +37,7 @@ if('1'==$_POST['status']){
 
             body { margin: 0px 0 0 0; background-color: #2B3E42; }
             .title{
-                color: F7F3E8;
+                color: #F7F3E8;
                 font-family: SolaimanLipi, Arial;
                 font-weight: normal;
                 font-size: 32px;
@@ -58,33 +65,33 @@ if('1'==$_POST['status']){
             }
             .right{
                 text-align: right;
-}
+            }
 
-.bbutton{
-    height:30px;
-    font-size: 18px;
-    font-weight: normal;
-    width: 200px;
-    margin-right: 20px;
-}
+            .bbutton{
+                height:30px;
+                font-size: 18px;
+                font-weight: normal;
+                width: 200px;
+                margin-right: 20px;
+            }
 
-.info{
-    font-size: 18px;
-    color:#EFEFEF;
-    padding: 20px;
-}
+            .info{
+                font-size: 18px;
+                color:#EFEFEF;
+                padding: 20px;
+            }
 
-.info a{
-    text-decoration: underline;
-    color:#EFEFEF;
-    
-}
+            .info a{
+                text-decoration: underline;
+                color:#EFEFEF;
 
-.info2{
-    margin-left:20px;
-    font-size:14px;
-    color:#EFEFEF;
-}
+            }
+
+            .info2{
+                margin-left:20px;
+                font-size:14px;
+                color:#EFEFEF;
+            }
         </style>
     </head>
     <body>
@@ -96,23 +103,24 @@ if('1'==$_POST['status']){
             </div>
         </div>
         <form id="poster" method="POST" action="">
-        <div class="row">
-            <div class="column grid_12">
-                <textarea name="message" class="bangla"></textarea>
+            <div class="row">
+                <div class="column grid_12">
+                    <textarea id="message" name="message" class="bangla"></textarea>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="column grid_6">
-                <p class="info2" <?php if ($access_token) echo "style='display:block;'"; else echo "style='display:none;'"; ?>>
-                    ডিফল্ট ফোনেটিক লেআউট এনাবল করা আছে। ইংরেজী মোডে সুইচ করতে চাইলে ctrl+y (ফায়ারফক্স/ইন্টারনেট এক্সপ্লোরার) অথবা ctrl+k (সাফারি/অপেরা) প্রেস করুন 
-                </p>
-                &nbsp;<a <?php if ($access_token) echo "style='display:none;'";?> href="redirect.php"><img src="images/light.png" border="0" style="margin-left: 20px"/></a>
+            <div class="row">
+                <div class="column grid_6">
+                    <p class="info2" <?php if ($access_token) echo "style='display:block;'"; else echo "style='display:none;'"; ?>>
+                        ডিফল্ট ফোনেটিক লেআউট এনাবল করা আছে। ইংরেজী মোডে সুইচ করতে চাইলে ctrl+y (ফায়ারফক্স/ইন্টারনেট এক্সপ্লোরার) অথবা ctrl+k (সাফারি/অপেরা) প্রেস করুন
+                    </p>
+                    &nbsp;<a <?php if ($access_token) echo "style='display:none;'";?> href="redirect.php"><img src="images/light.png" border="0" style="margin-left: 20px"/></a>
+                </div>
+                <div class="column grid_6 right">
+                    <input class="bbutton" type="button" value="পোস্ট করো" onclick="postStatus()"/>
+                    <input type="hidden" name="status" value="1"/>
+                    <input type="hidden" id="shrinked" name="shrinked" value=""/>
+                </div>
             </div>
-            <div class="column grid_6 right">
-                <input class="bbutton" type="button" value="পোস্ট করো" onclick="postStatus()"/>
-                <input type="hidden" name="status" value="1"/>
-            </div>
-        </div>
 
         </form>
         <div class="row">
@@ -122,42 +130,48 @@ if('1'==$_POST['status']){
         </div>
         <script type="text/javascript">
             var cango,pid;
-            <?php
-            if ($access_token) echo "cango=1;";
-            if ($access_token) echo "pid={$pid};";
-            ?>
-
-            function postStatus(){
-                if(cango){
-                    $("#poster").submit();
-                }
-                else
-                    alert("আপনাকে প্রথমে টুইটারে সাইনইন করতে হবে। এজন্য বামপাশে 'Sign in with Twitter' বাটনে ক্লিক করুন");
+<?php
+if ($access_token) echo "cango=1;";
+if ($access_token) echo "pid={$pid};";
+?>
+    function postStatus(){
+        if(cango){
+            var message = $("#message").val();
+            if (message.length>125){
+                var splitted = message.substr(0, 95);
+                var lastSpace = splitted.lastIndexOf(" ");
+                var shrinked = splitted.substr(0, lastSpace);
+                $("#shrinked").val(shrinked);
             }
+            $("#poster").submit();
+        }
+        else
+            alert("আপনাকে প্রথমে টুইটারে সাইনইন করতে হবে। এজন্য বামপাশে 'Sign in with Twitter' বাটনে ক্লিক করুন");
+    }
 
-            $(document).ready(function(){
+    $(document).ready(function(){
 
-                $(".bangla").bnKb({
-                    'switchkey': {"webkit":"k","mozilla":"y","safari":"k","chrome":"k","msie":"y"},
-                    'driver': phonetic
-                });
+        $(".bangla").bnKb({
+            'switchkey': {"webkit":"k","mozilla":"y","safari":"k","chrome":"k","msie":"y"},
+            'driver': phonetic
+        });
 
-                if(pid) alert("আপনার স্ট্যাস ঠিকমত পোস্ট করা হয়েছে");
-            });
+        if(pid) alert("আপনার স্ট্যাস ঠিকমত পোস্ট করা হয়েছে");
+    });
 
-            function enablePhonetic()
-            {
-                $(".bangla").bnKb(
-                {'switchkey': {"webkit":"k","mozilla":"y","safari":"k","chrome":"k","msie":"y"},
-                    'driver': phonetic});
-            }
+    function enablePhonetic()
+    {
+        $(".bangla").bnKb(
+        {'switchkey': {"webkit":"k","mozilla":"y","safari":"k","chrome":"k","msie":"y"},
+            'driver': phonetic});
+    }
 
-            function enableProbhat()
-            {
-                $(".bangla").bnKb(
-                {'switchkey': {"webkit":"k","mozilla":"y","safari":"k","chrome":"k","msie":"y"},
-                    'driver': probhat});
-            }
+    function enableProbhat()
+    {
+        $(".bangla").bnKb(
+        {'switchkey': {"webkit":"k","mozilla":"y","safari":"k","chrome":"k","msie":"y"},
+            'driver': probhat});
+    }
 
 
         </script>

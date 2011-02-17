@@ -67,4 +67,36 @@ function savePost($user_id, $message) {
         //print_r($e);
     }
 }
+
+function getShortUrl($longUrl) {
+    $bitly_username = "banglatwitterstatus";
+    $bitly_api_key = "R_5b3666299e17fb85766aa9eab1aac4e8";
+    $requestUri = "http://api.bit.ly/v3/shorten?login={$bitly_username}&apiKey={$bitly_api_key}&format=json&longUrl=" . urlencode($longUrl);
+    $response = json_decode(file_get_contents($requestUri));
+    if ($response->status_code == 200) {
+        return $response->data->url;
+    } else {
+        return FALSE;
+    }
+}
+
+function getPostUrl($pid) {
+    $secret = SECRET;
+    $hash = md5("{$secret}{$pid}");
+    $longUrl = "http://bangla.twitterstat.us/post.php?id={$pid}&hash={$hash}";
+    $shortUrl = getShortUrl($longUrl);
+    return $shortUrl;
+
+}
+
+function getPost($pid) {
+    $pdo = getConnection();
+
+    $sql = "SELECT * FROM posts WHERE id=:pid";
+    $ps = $pdo->prepare($sql);
+    $ps->bindParam(':pid', $pid, PDO::PARAM_INT);
+    $ps->execute();
+    $data = $ps->fetch(PDO::FETCH_ASSOC);
+    return $data;
+}
 ?>
